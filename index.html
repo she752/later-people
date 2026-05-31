@@ -1,0 +1,460 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>后来人 · 身份选择与薪火相传</title>
+  <link href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #fdf8f0;
+      font-family: "Noto Serif SC", "ZCOOL XiaoWei", "Ma Shan Zheng", "华文楷体", "楷体", KaiTi, serif;
+      min-height: 100vh; display: flex; justify-content: center; align-items: center;
+      padding: 20px; margin: 0; position: relative; overflow-x: hidden;
+    }
+    .background {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: radial-gradient(circle at 30% 40%, #fae3c6 0%, #fef7ed 70%, #f5e1c4 100%);
+      z-index: -2;
+    }
+    .spark-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; opacity: 0.45; }
+    .spark {
+      position: absolute; background: #f7c744; border-radius: 50%;
+      box-shadow: 0 0 20px #f0b323, 0 0 45px #ffb703;
+      animation: floatSpark 10s infinite ease-in-out; opacity: 0;
+    }
+    @keyframes floatSpark {
+      0% { transform: translateY(0) scale(0.6); opacity: 0; }
+      25% { opacity: 0.8; } 70% { opacity: 0.6; }
+      100% { transform: translateY(-110vh) scale(0.1); opacity: 0; }
+    }
+    .page-container { width: 100%; max-width: 750px; position: relative; }
+    .cover-card, .selection-card, .wall-card {
+      width: 100%; background: rgba(255, 250, 240, 0.8);
+      backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+      border: 1px solid rgba(200, 150, 70, 0.5);
+      box-shadow: 0 30px 50px rgba(180, 120, 30, 0.25), 0 0 0 1px rgba(230, 180, 80, 0.4) inset;
+      border-radius: 48px; padding: 30px 24px 35px; color: #4b3a24; transition: all 0.3s ease;
+    }
+    .wall-card { border-radius: 56px; padding: 32px 28px 38px; display: flex; flex-direction: column; align-items: center; }
+    .hidden { display: none !important; }
+    .cover-inner { text-align: center; padding: 10px 0; }
+    .cover-poem { font-size: clamp(1.8rem, 6vw, 2.4rem); font-weight: 700; color: #b45f2a; letter-spacing: 4px; margin-bottom: 8px; text-shadow: 0 2px 12px rgba(255,215,0,0.4); line-height: 1.4; }
+    .cover-author { font-size: 1.1rem; color: #8b6f4c; margin-bottom: 16px; font-style: italic; letter-spacing: 2px; }
+    .cover-divider { width: 60px; height: 2px; background: #dba951; margin: 0 auto 24px; }
+    .cover-title { font-size: 1.4rem; color: #5e3e1a; margin-bottom: 6px; font-weight: 600; letter-spacing: 2px; }
+    .cover-subtitle { font-size: 1rem; color: #7a5c38; margin-bottom: 28px; line-height: 1.6; }
+    .cover-btn {
+      background: linear-gradient(135deg, #f3b847 0%, #e09d2c 100%); border: none; border-radius: 60px;
+      padding: 16px 42px; font-size: 1.3rem; font-weight: bold; color: #2d1f0b; letter-spacing: 5px;
+      cursor: pointer; box-shadow: 0 10px 0 #b0761a, 0 14px 35px rgba(240,170,30,0.55);
+      border: 1px solid #ffe28c; transition: all 0.12s ease; font-family: inherit;
+    }
+    .cover-btn:active { transform: translateY(4px); box-shadow: 0 6px 0 #8b5c1a, 0 12px 25px #e6a832; }
+    .progress-bar { display: flex; align-items: center; gap: 6px; margin-bottom: 24px; justify-content: center; }
+    .progress-dot { width: 12px; height: 12px; border-radius: 50%; background: #d4b896; transition: all 0.3s; }
+    .progress-dot.active { background: #e6a01e; box-shadow: 0 0 14px #f0b323; transform: scale(1.3); }
+    .progress-dot.done { background: #c49a2b; }
+    .progress-line { width: 30px; height: 2px; background: #d4b896; }
+    .question-title { font-size: 1.3rem; font-weight: 700; color: #5e3e1a; text-align: center; margin-bottom: 24px; letter-spacing: 2px; line-height: 1.5; }
+    .options-grid { display: flex; flex-direction: column; gap: 14px; margin-bottom: 20px; }
+    .option-btn {
+      background: rgba(255, 252, 245, 0.7); border: 2px solid #dba951; border-radius: 20px;
+      padding: 16px 20px; font-size: 1.05rem; color: #4d3820; cursor: pointer; transition: all 0.2s ease;
+      text-align: left; font-family: inherit; letter-spacing: 0.5px; backdrop-filter: blur(6px);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .option-btn:hover { background: rgba(255, 245, 210, 0.85); border-color: #f5b042; box-shadow: 0 6px 18px rgba(200, 140, 30, 0.25); transform: translateX(4px); }
+    .option-btn:active { background: #f5e1b9; transform: scale(0.98); }
+    .option-letter { background: #f0b323; color: #2d1f0b; font-weight: bold; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.1rem; }
+    .result-section { text-align: center; padding: 20px 0; }
+    .identity-badge { display: inline-block; background: linear-gradient(135deg, #f3b847, #e09d2c); color: #2d1f0b; font-size: 1.8rem; font-weight: bold; padding: 16px 32px; border-radius: 50px; letter-spacing: 3px; margin: 16px 0; box-shadow: 0 12px 30px rgba(240, 170, 30, 0.5); border: 2px solid #ffe28c; }
+    .identity-desc { font-size: 1.1rem; color: #6b4f3c; margin: 8px 0 24px; font-style: italic; }
+    .jump-btn {
+      background: linear-gradient(135deg, #c99b3b, #b57c1c); border: none; border-radius: 60px;
+      padding: 16px 36px; font-size: 1.3rem; font-weight: bold; color: #fff9ed; letter-spacing: 4px;
+      cursor: pointer; box-shadow: 0 8px 0 #7a4f1a, 0 14px 30px rgba(200, 140, 20, 0.5);
+      transition: all 0.12s ease; border: 1px solid #ffdd88; font-family: inherit;
+    }
+    .jump-btn:active { transform: translateY(4px); box-shadow: 0 4px 0 #5a3a12, 0 12px 25px #e6a832; }
+    .verse-section { text-align: center; margin-bottom: 14px; width: 100%; }
+    .poem-line { font-size: clamp(1.8rem, 6.5vw, 2.6rem); font-weight: 700; letter-spacing: 5px; color: #b45f2a; text-shadow: 0 2px 12px rgba(255, 215, 0, 0.4), 0 0 20px #f7e05e; line-height: 1.4; margin-bottom: 6px; word-break: break-word; }
+    .poem-author { font-size: 1.1rem; color: #8b6f4c; letter-spacing: 3px; margin-bottom: 5px; font-style: italic; }
+    .current-identity { font-size: 1rem; color: #7a5c38; background: rgba(250, 225, 160, 0.45); padding: 8px 22px; border-radius: 30px; margin: 8px 0 16px; letter-spacing: 1px; }
+    .input-group { width: 100%; display: flex; flex-direction: column; gap: 16px; margin: 8px 0 24px; position: relative; }
+    .message-input { width: 100%; background: rgba(255, 252, 245, 0.85); border: 2px solid #dba951; border-radius: 60px; padding: 16px 26px; font-size: 1.1rem; color: #4d3820; outline: none; resize: vertical; font-family: inherit; backdrop-filter: blur(10px); transition: all 0.3s ease; box-shadow: 0 6px 14px rgba(180, 130, 40, 0.15); }
+    .message-input:focus { border-color: #f5b042; box-shadow: 0 0 30px #f7c978, 0 0 12px #f0a500; }
+    .send-btn {
+      background: linear-gradient(135deg, #f3b847 0%, #e09d2c 100%); border: none; border-radius: 60px;
+      padding: 16px 32px; font-size: 1.4rem; font-weight: bold; color: #2d1f0b; letter-spacing: 7px;
+      cursor: pointer; box-shadow: 0 10px 0 #b0761a, 0 14px 35px rgba(240, 170, 30, 0.55);
+      transition: all 0.12s ease; text-transform: uppercase; display: flex; align-items: center;
+      justify-content: center; gap: 10px; border: 1px solid #ffe28c; font-family: inherit;
+    }
+    .send-btn:active { transform: translateY(5px); box-shadow: 0 5px 0 #8b5c1a, 0 18px 30px #f5b042; }
+    .bubble-fly {
+      position: fixed; background: rgba(245, 225, 170, 0.9); backdrop-filter: blur(8px);
+      border-radius: 30px; padding: 12px 22px; font-size: 1.1rem; color: #4a3620;
+      box-shadow: 0 12px 28px rgba(200, 140, 30, 0.5); z-index: 100; pointer-events: none;
+      font-family: "Ma Shan Zheng", "ZCOOL XiaoWei", "华文楷体", cursive;
+      white-space: nowrap; animation: bubbleFloat 0.9s ease-out forwards;
+      border: 1px solid #e6b85c; max-width: 280px; text-align: center;
+    }
+    @keyframes bubbleFloat {
+      0% { opacity: 1; transform: translate(0, 0) scale(0.7); }
+      30% { opacity: 1; transform: translate(20px, -50px) scale(1.1); }
+      70% { opacity: 0.9; transform: translate(40px, -120px) scale(0.95); }
+      100% { opacity: 0; transform: translate(60px, -190px) scale(0.8); }
+    }
+    .golden-burst {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 999; display: flex; align-items: center; justify-content: center;
+      animation: flashOverlay 0.8s ease-out forwards;
+    }
+    .golden-text-effect {
+      font-size: 4.2rem; font-weight: 900; color: #ffcd5c;
+      text-shadow: 0 0 70px #ffae00, 0 0 140px #ff8c00, 0 0 220px #ffd966;
+      animation: goldPulse 0.9s ease-out; letter-spacing: 14px; opacity: 0; transform: scale(0.4);
+    }
+    @keyframes flashOverlay {
+      0% { background: rgba(255, 235, 140, 0.25); }
+      50% { background: rgba(255, 220, 80, 0.55); }
+      100% { background: rgba(255, 240, 150, 0); }
+    }
+    @keyframes goldPulse {
+      0% { opacity: 0; transform: scale(0.2); }
+      30% { opacity: 1; transform: scale(1.4); }
+      70% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(0.85); }
+    }
+    .wall-section {
+      width: 100%; margin-top: 14px; background: rgba(250, 242, 225, 0.7);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-radius: 42px; border: 1px solid rgba(200, 150, 60, 0.55);
+      padding: 18px 12px; box-shadow: 0 18px 35px rgba(170, 120, 20, 0.2);
+    }
+    .wall-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 10px 12px; color: #7a5c38; font-weight: bold; letter-spacing: 2px;
+      border-bottom: 1px dashed #d4a24c; margin-bottom: 12px;
+    }
+    .live-badge {
+      background: #d98c2e; color: #fff9ed; padding: 4px 14px; border-radius: 30px;
+      font-size: 0.8rem; animation: pulseLive 2s infinite; display: flex; align-items: center; gap: 4px;
+    }
+    @keyframes pulseLive {
+      0% { opacity: 0.9; box-shadow: 0 0 5px #e5941e; }
+      50% { opacity: 1; box-shadow: 0 0 20px #f5b041; }
+      100% { opacity: 0.9; box-shadow: 0 0 5px #e5941e; }
+    }
+    .message-list { max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding: 8px 4px; scroll-behavior: smooth; }
+    .message-item {
+      background: rgba(255, 250, 235, 0.8); backdrop-filter: blur(10px);
+      border-left: 7px solid; border-radius: 20px; padding: 12px 18px;
+      font-size: 1.05rem; box-shadow: 0 6px 18px rgba(190, 140, 30, 0.2);
+      animation: slideIn 0.4s ease-out; display: flex; flex-direction: column;
+      word-break: break-word; font-family: "Ma Shan Zheng", "ZCOOL XiaoWei", "华文楷体", "楷体", KaiTi, cursive;
+      letter-spacing: 0.4px;
+    }
+    @keyframes slideIn { 0% { opacity: 0; transform: translateX(35px); } 100% { opacity: 1; transform: translateX(0); } }
+    .message-identity { font-size: 0.75rem; opacity: 0.7; margin-bottom: 4px; letter-spacing: 1px; }
+    .message-content { font-size: 1rem; }
+    .empty-message { text-align: center; color: #b0956a; padding: 25px; font-style: italic; }
+    .message-list::-webkit-scrollbar { width: 6px; }
+    .message-list::-webkit-scrollbar-track { background: #f3e2c4; border-radius: 10px; }
+    .message-list::-webkit-scrollbar-thumb { background: #dba142; border-radius: 10px; }
+    .floating-quote {
+      position: fixed; top: 14%; left: 50%; transform: translateX(-50%);
+      font-size: 0.95rem; color: #b7772e; background: rgba(255, 245, 210, 0.8);
+      backdrop-filter: blur(14px); padding: 8px 24px; border-radius: 40px;
+      white-space: nowrap; pointer-events: none; z-index: 10;
+      box-shadow: 0 6px 20px rgba(220, 150, 30, 0.5);
+      animation: quoteFloat 7s ease-in-out infinite; letter-spacing: 2px;
+    }
+    @keyframes quoteFloat {
+      0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+      20% { opacity: 0.9; transform: translateX(-50%) translateY(0px); }
+      80% { opacity: 0.9; transform: translateX(-50%) translateY(-2px); }
+      100% { opacity: 0; transform: translateX(-50%) translateY(-15px); }
+    }
+    @media (max-width: 500px) {
+      .cover-card, .selection-card, .wall-card { padding: 22px 16px; }
+      .option-btn { font-size: 0.95rem; padding: 14px 16px; }
+    }
+  </style>
+</head>
+<body>
+<div class="background"></div>
+<div class="spark-layer" id="sparkLayer"></div>
+<div class="floating-quote" id="floatingQuote">✨ 丹心从来系家国 ✨</div>
+<div id="goldenEffectContainer" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999;"></div>
+
+<div class="page-container">
+
+  <div id="coverPage" class="cover-card">
+    <div class="cover-inner">
+      <div class="cover-poem">「杀了夏明翰，<br>还有后来人」</div>
+      <div class="cover-author">—— 夏明翰</div>
+      <div class="cover-divider"></div>
+      <div class="cover-title">🌟 你，就是「后来人」</div>
+      <div class="cover-subtitle">回答3个小问题<br>解锁你的专属身份</div>
+      <button id="startSelectionBtn" class="cover-btn">开始探索</button>
+    </div>
+  </div>
+
+  <div id="selectionPage" class="selection-card hidden">
+    <div class="progress-bar" id="progressBar">
+      <span class="progress-dot active" id="dot1"></span><span class="progress-line"></span>
+      <span class="progress-dot" id="dot2"></span><span class="progress-line"></span>
+      <span class="progress-dot" id="dot3"></span>
+    </div>
+    <div class="question-title" id="questionTitle">结合夏明翰的故事，哪一点最戳你？</div>
+    <div class="options-grid" id="optionsContainer"></div>
+    <div id="resultContainer" class="result-section hidden"></div>
+  </div>
+
+  <div id="wallPage" class="wall-card hidden">
+    <div class="verse-section">
+      <div class="poem-line">「杀了夏明翰，</div>
+      <div class="poem-line">还有后来人」</div>
+      <div class="poem-author">—— 夏明翰</div>
+    </div>
+    <div class="current-identity" id="currentIdentityDisplay">🌟 你的身份：---</div>
+    <div class="input-group">
+      <textarea id="userMessage" class="message-input" placeholder="写下你的寄语..." rows="2" maxlength="120"></textarea>
+      <button id="sendButton" class="send-btn"><span>🔥</span> 传承 <span>✨</span></button>
+    </div>
+    <div class="wall-section">
+      <div class="wall-header"><span>📜 后来人·薪火墙</span><span class="live-badge"><span>●</span> 实时</span></div>
+      <div id="messageContainer" class="message-list"><div class="empty-message">✨ 成为第一位后来人 ✨</div></div>
+    </div>
+  </div>
+
+</div>
+<script>
+(function() {
+  var USERNAME = "she752";
+  var TOKEN = "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";
+  var REPO = "later-people";
+  var FILE_PATH = "messages.json";
+  var API_URL = "https://api.github.com/repos/" + USERNAME + "/" + REPO + "/contents/" + FILE_PATH;
+
+  var questions = {
+    round1: {
+      title: "结合夏明翰的故事，哪一点最戳你？",
+      options: [
+        { key: "A", text: "直面生死也绝不低头，一身傲骨超有魄力" },
+        { key: "B", text: "铁汉也有柔情，对家人的牵挂格外暖心" },
+        { key: "C", text: "心系后辈、接力传承，相信理想永远有人延续" },
+        { key: "D", text: "放弃安逸生活，为了理想一路奔赴向前" }
+      ]
+    },
+    round2: {
+      A: {title:"遇到难题卡点时，你的状态更像？",options:[{key:"A",text:"直接冲！迎难而上主打一个不服输"},{key:"B",text:"守住底线，原则问题半分不让步"},{key:"C",text:"主动扛事，化身身边人的顶梁柱"},{key:"D",text:"左右纠结，迟迟不敢迈出第一步"}]},
+      B: {title:"被先烈刚柔并济的性格打动，现实里的你是？",options:[{key:"A",text:"外向开朗，一眼就能看穿别人情绪"},{key:"B",text:"嘴笨不爱说，习惯用行动表达关心"},{key:"C",text:"两头兼顾，追梦和陪亲友都不想落"},{key:"D",text:"想法摇摆，容易被旁人影响判断"}]},
+      C: {title:"读懂「还有后来人」的传承，你理解的接力传承是？",options:[{key:"A",text:"打磨自己，努力变成更优秀的人"},{key:"B",text:"传递善意，做身边人的小暖阳"},{key:"C",text:"守住初心，永远记得出发的理由"},{key:"D",text:"想法飘忽，一会想努力一会想摆烂"}]},
+      D: {title:"敬佩先烈为理想舍弃安逸，面对理想和现实，你会？",options:[{key:"A",text:"认准目标，一路往前冲不回头"},{key:"B",text:"三思而后行，规划到位再出发"},{key:"C",text:"灵活变通，在现实里追逐热爱"},{key:"D",text:"举棋不定，在理想和安逸间纠结"}]}
+    },
+    round3: {
+      AA:{title:"朝着目标往前冲，你属于？",options:[{key:"A",text:"全场先锋，干啥都抢在最前面"},{key:"B",text:"稳扎稳打，一步一个脚印赶路"},{key:"C",text:"灵活出击，找巧劲高效完成任务"},{key:"D",text:"抱团前进，喜欢和伙伴并肩作战"}]},
+      AB:{title:"身边人想法五花八门时，你会？",options:[{key:"A",text:"坚持自我，我的立场绝不摇摆"},{key:"B",text:"温和沟通，试着兼顾各方想法"},{key:"C",text:"旁观思考，理清思路再做判断"},{key:"D",text:"反复纠结，拿不定最终主意"}]},
+      AC:{title:"团队相处里，你的日常模式是？",options:[{key:"A",text:"全能担当，大小事都愿意操心"},{key:"B",text:"默默兜底，关键时刻绝不掉链"},{key:"C",text:"活跃气氛，带动大家轻松相处"},{key:"D",text:"畏手畏脚，害怕承担额外责任"}]},
+      AD:{title:"面对需要做决定的事，你常态是？",options:[{key:"A",text:"思前想后，纠结半天难下判断"},{key:"B",text:"一拖再拖，能晚点做就晚点做"},{key:"C",text:"求助他人，跟着别人的选择走"},{key:"D",text:"硬着头皮，随便选一个应付过去"}]},
+      BA:{title:"日常社交，你属于？",options:[{key:"A",text:"社牛本牛，和谁都能聊得来"},{key:"B",text:"慢热选手，熟了之后才放开"},{key:"C",text:"选择性社交，只和合拍的人玩"},{key:"D",text:"纠结社恐，想搭话又不敢行动"}]},
+      BB:{title:"想关心别人时，你更喜欢？",options:[{key:"A",text:"行动至上，悄悄把事情安排好"},{key:"B",text:"直白聊天，暖心话直接说出口"},{key:"C",text:"隔空陪伴，默默给予情绪支持"},{key:"D",text:"犹豫不决，不知道该如何表达"}]},
+      BC:{title:"平衡个人目标与陪伴亲友，你会？",options:[{key:"A",text:"时间分配大师，两边都不耽误"},{key:"B",text:"分清主次，重要的事优先安排"},{key:"C",text:"随机应变，看当下情况做选择"},{key:"D",text:"反复权衡，越想越不知如何选"}]},
+      BD:{title:"别人提出不同意见时，你会？",options:[{key:"A",text:"立刻动摇，跟着改变原有想法"},{key:"B",text:"半信半疑，反复对比难以抉择"},{key:"C",text:"坚持本心，不受外界言论干扰"},{key:"D",text:"刻意回避，不想卷入选择难题"}]},
+      CA:{title:"自我提升的路上，你是？",options:[{key:"A",text:"卷王选手，持续突破不停歇"},{key:"B",text:"稳步进阶，按自己节奏成长"},{key:"C",text:"劳逸结合，进步快乐两不误"},{key:"D",text:"三天打鱼，做事总爱拖延滞后"}]},
+      CB:{title:"想给身边人传递温暖时，你会？",options:[{key:"A",text:"主动出击，热心值时刻在线"},{key:"B",text:"顺势帮忙，有人需要就搭把手"},{key:"C",text:"结伴同行，和朋友一起送温暖"},{key:"D",text:"犹豫观望，想帮忙又止步不前"}]},
+      CC:{title:"坚守初心的过程中，你的状态是？",options:[{key:"A",text:"高度自律，时刻严格要求自己"},{key:"B",text:"随心而行，跟着本心自在生活"},{key:"C",text:"时常复盘，不断调整前行方向"},{key:"D",text:"左右徘徊，在坚持与放弃间拉扯"}]},
+      CD:{title:"面对每日学习生活，你的常态是？",options:[{key:"A",text:"拖延成性，任务总压到最后一刻"},{key:"B",text:"心态反复，努力和摆烂交替切换"},{key:"C",text:"随波逐流，别人做什么就跟着做"},{key:"D",text:"勉强应付，完成任务就算万事大吉"}]},
+      DA:{title:"追逐热爱的路上，你属于？",options:[{key:"A",text:"热血追梦人，永远满怀激情"},{key:"B",text:"超长续航党，耐力拉满坚持到底"},{key:"C",text:"敢闯敢试，不怕走弯路踩坑"},{key:"D",text:"中途犹豫，走着走着就开始迷茫"}]},
+      DB:{title:"做规划、定目标时，你的风格是？",options:[{key:"A",text:"逻辑达人，计划列得清清楚楚"},{key:"B",text:"随性规划，大方向对就行"},{key:"C",text:"动态调整，计划永远赶得上变化"},{key:"D",text:"规划拖延，迟迟不肯动手安排"}]},
+      DC:{title:"理想和现实产生冲突，你会？",options:[{key:"A",text:"寻找折中方案，两边尽量兼顾"},{key:"B",text:"坚守热爱，绝不轻易妥协让步"},{key:"C",text:"暂时妥协，等待合适时机重启"},{key:"D",text:"陷入纠结，不知道该偏向哪一方"}]},
+      DD:{title:"探索未来方向时，你是？",options:[{key:"A",text:"犹豫再三，每个方向都想尝试又不敢"},{key:"B",text:"一拖再拖，不愿主动思考未来规划"},{key:"C",text:"边走边看，在体验中慢慢找寻答案"},{key:"D",text:"虚心请教，完全听从他人的建议"}]}
+    }
+  };
+
+  var identityMap = {
+    "AAA":["冲锋小达人","行动力天花板，团队里的开路先锋"],"AAB":["稳步实干仔","踏实靠谱，做事从不敷衍"],"AAC":["巧劲能手","懂得找方法，效率在线"],"AAD":["组队搭子","喜欢并肩作战，氛围感搭档"],"ABA":["原则倔脾气","立场超坚定，有自己的底线"],"ABB":["和平调解员","性格随和，擅长化解小矛盾"],"ABC":["理性观察员","遇事冷静，思考很全面"],"ABD":["纠结困难户","想法太多，总难做出选择"],"ACA":["操心大家长","责任感拉满，事事都想兼顾"],"ACB":["隐形兜底侠","话少能力强，默默守住全场"],"ACC":["气氛组担当","自带欢乐buff，活跃小能手"],"ACD":["佛系观望者","不爱出头，习惯躲在人群后"],"ADA":["重度摇摆党","遇事反复纠结，选择困难本人"],"ADB":["拖延重症选手","能拖就拖，不到最后不行动"],"ADC":["跟风小跟班","没主见，习惯跟着别人走"],"ADD":["应付型选手","草草了事，只求快速交差"],"BAA":["社牛小太阳","开朗暖心，走到哪都受欢迎"],"BAB":["慢热温柔宅","外冷内热，熟悉之后格外贴心"],"BAC":["小众交友派","交友看缘分，只和同频人相处"],"BAD":["纠结社恐人","想社交却胆怯，内心反复拉扯"],"BBA":["行动派暖友","不善言辞，行动永远比话语暖心"],"BBB":["走心聊天搭子","倾听达人，专属情绪树洞"],"BBC":["双向奔赴伙伴","习惯并肩同行，温暖又靠谱"],"BBD":["嘴笨纠结党","想表达关心，却不知如何开口"],"BCA":["时间管理大神","平衡生活与目标，全能选手"],"BCB":["拎得清选手","主次分明，做事干脆利落"],"BCC":["灵活变通达人","懂得取舍，处事通透"],"BCD":["权衡纠结怪","事事反复考量，越想越难抉择"],"BDA":["耳根软选手","极易被他人影响，立场不坚定"],"BDB":["半信半疑派","遇事拿不准，总处于观望状态"],"BDC":["本心坚守者","不受外界干扰，坚持自我"],"BDD":["逃避小能手","遇到选择难题，下意识躲开"],"CAA":["进阶卷王","上进心满满，持续突破自我"],"CAB":["节奏佛系选手","不内卷，按自己步调慢慢成长"],"CAC":["快乐成长派","成长和快乐两手抓"],"CAD":["拖延摸鱼党","做事爱拖延，进度永远滞后"],"CBA":["热心公益人","主动送温暖，善意永远在线"],"CBB":["随缘好心人","举手之劳，愿意随手帮一把"],"CBC":["同行小伙伴","结伴而行，一起传递温暖"],"CBD":["佛系观望人","有心帮忙，却始终止步不前"],"CCA":["自律追光者","严于律己，始终坚守本心"],"CCB":["随心自在派","遵从内心，活得潇洒自由"],"CCC":["复盘小能手","时常自省，不断调整方向"],"CCD":["内耗摇摆人","在坚持与放弃之间反复内耗"],"CDA":["摆烂交替选手","心态飘忽，努力和摆烂来回切换"],"CDB":["纯摆烂玩家","不想思考，跟着大部队走就行"],"CDC":["元气少年/少女","心态积极，每天活力满满"],"CDD":["敷衍度日派","只求完成任务，不追求质量"],"DAA":["热血追光少年","满怀热爱，为理想热血奔赴"],"DAB":["超长待机选手","耐力超强，认准目标坚持到底"],"DAC":["勇敢试错官","不惧挑战，敢于尝试新道路"],"DAD":["迷茫探索者","追逐路上，时常陷入自我怀疑"],"DBA":["全能规划师","擅长做计划，条理清晰思路清"],"DBB":["随性规划派","抓大放小，不拘泥细碎规则"],"DBC":["动态规划达人","随机应变，计划跟着现状调整"],"DBD":["规划拖延症","迟迟不愿动笔，规划永远停在口头"],"DCA":["平衡智慧家","擅长权衡，兼顾理想与现实"],"DCB":["热爱死忠粉","坚守初心，绝不向现实妥协"],"DCC":["暂缓追梦人","懂得蛰伏，等待最佳时机"],"DCD":["终极选择困难户","理想与现实拉扯，完全拿不定主意"],"DDA":["多方试探党","每个方向都想试，迟迟定不下目标"],"DDB":["终极拖延大师","规划、行动一律往后拖"],"DDC":["体验式成长派","在经历中找寻方向"],"DDD":["被动前行选手","没有主见，全程听从他人安排"]
+  };
+
+  var COLOR_PALETTE = ["#b45f2a","#7f5b3b","#8b5a2b","#a0522d","#6b4f3c","#9c6e4b","#5d4037","#8d6e63","#a67c52","#7b5e3b","#b76e4b","#6d4c3d"];
+  var currentRound = 1, answers = [], finalIdentity = "", finalDesc = "", messages = [];
+
+  function loadMessages() {
+    fetch(API_URL, { headers: { "Authorization": "token " + TOKEN } })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        try { messages = JSON.parse(atob(data.content)) || []; } catch(e) { messages = []; }
+        renderWall();
+      })
+      .catch(function() { messages = []; renderWall(); });
+  }
+
+  function saveMessages() {
+    var content = btoa(unescape(encodeURIComponent(JSON.stringify(messages))));
+    fetch(API_URL, {
+      method: "PUT",
+      headers: { "Authorization": "token " + TOKEN, "Content-Type": "application/json" },
+      body: JSON.stringify({ message: "update", content: content, sha: window._lastSha || "" })
+    }).then(function(r) { return r.json(); })
+      .then(function(data) { window._lastSha = data.content.sha; })
+      .catch(function() {});
+  }
+
+  function getColor(idx) { return COLOR_PALETTE[idx % COLOR_PALETTE.length]; }
+
+  function renderWall() {
+    var mc = document.getElementById('messageContainer');
+    if (!mc) return;
+    mc.innerHTML = '';
+    if (messages.length === 0) { mc.innerHTML = '<div class="empty-message">🌱 等待后来人发声</div>'; return; }
+    var reversed = messages.slice().reverse();
+    reversed.forEach(function(msg, idx) {
+      var div = document.createElement('div'); div.className = 'message-item';
+      var color = getColor(idx); div.style.borderLeftColor = color; div.style.color = color;
+      var idSpan = document.createElement('div'); idSpan.className = 'message-identity';
+      idSpan.textContent = '🆔 ' + (msg.identity || '后来人'); idSpan.style.color = color;
+      var textSpan = document.createElement('span'); textSpan.className = 'message-content';
+      textSpan.textContent = msg.text;
+      div.appendChild(idSpan); div.appendChild(textSpan);
+      mc.appendChild(div);
+    });
+    mc.scrollTop = 0;
+  }
+
+  function spawnBubble(text) {
+    var bubble = document.createElement('div'); bubble.className = 'bubble-fly'; bubble.textContent = text;
+    var r = document.getElementById('userMessage').getBoundingClientRect();
+    bubble.style.left = (r.left + r.width/2 - 100) + 'px'; bubble.style.top = (r.top - 10) + 'px';
+    bubble.style.position = 'fixed'; document.body.appendChild(bubble);
+    bubble.addEventListener('animationend', function() { if (bubble.parentNode) bubble.parentNode.removeChild(bubble); });
+  }
+
+  function triggerGoldenEffect() {
+    var gc = document.getElementById('goldenEffectContainer'); gc.innerHTML = '';
+    var burst = document.createElement('div'); burst.className = 'golden-burst';
+    var t = document.createElement('div'); t.className = 'golden-text-effect'; t.textContent = '薪火相传';
+    burst.appendChild(t); gc.appendChild(burst);
+    setTimeout(function() { if (gc.contains(burst)) gc.removeChild(burst); }, 850);
+    for (var i = 0; i < 18; i++) {
+      (function(i) { setTimeout(function() {
+        var p = document.createElement('div');
+        p.style.cssText = 'position:fixed;width:10px;height:10px;background:#FFC107;border-radius:50%;box-shadow:0 0 30px #FFB300,0 0 55px #FF8F00;pointer-events:none;z-index:1000;animation:goldPulse 0.8s ease-out forwards;';
+        p.style.left = Math.random()*100+'%'; p.style.top = Math.random()*100+'%'; gc.appendChild(p);
+        setTimeout(function() { if(gc.contains(p)) gc.removeChild(p); }, 750);
+      }, i*22); })(i);
+    }
+  }
+
+  function handleSend() {
+    var val = document.getElementById('userMessage').value.trim();
+    if (!val) return;
+    spawnBubble(val);
+    messages.push({ identity: finalIdentity, text: val });
+    if (messages.length > 60) messages = messages.slice(-60);
+    saveMessages();
+    renderWall();
+    document.getElementById('userMessage').value = '';
+    triggerGoldenEffect();
+  }
+
+  function updateProgress() {
+    ['dot1','dot2','dot3'].forEach(function(id, i) {
+      var d = document.getElementById(id); d.classList.remove('active','done');
+      if (i < answers.length) d.classList.add('done');
+      if (i === answers.length) d.classList.add('active');
+    });
+  }
+
+  function renderOptions(options) {
+    var oc = document.getElementById('optionsContainer'); oc.innerHTML = '';
+    options.forEach(function(opt) {
+      var btn = document.createElement('button'); btn.className = 'option-btn';
+      btn.innerHTML = '<span class="option-letter">' + opt.key + '</span>' + opt.text;
+      btn.addEventListener('click', function() { handleOptionClick(opt.key); });
+      oc.appendChild(btn);
+    });
+  }
+
+  function handleOptionClick(key) {
+    answers.push(key); updateProgress();
+    if (currentRound === 1) { currentRound = 2; var r2 = questions.round2[answers[0]]; document.getElementById('questionTitle').textContent = r2.title; renderOptions(r2.options); }
+    else if (currentRound === 2) { currentRound = 3; var r3 = questions.round3[answers[0]+answers[1]]; document.getElementById('questionTitle').textContent = r3.title; renderOptions(r3.options); }
+    else if (currentRound === 3) { var code = answers.join(''); var data = identityMap[code] || ["后来人","薪火相传，接力前行"]; finalIdentity = data[0]; finalDesc = data[1]; showResult(); }
+  }
+
+  function showResult() {
+    document.getElementById('questionTitle').style.display = 'none';
+    document.getElementById('optionsContainer').style.display = 'none';
+    document.getElementById('progressBar').style.display = 'none';
+    var rc = document.getElementById('resultContainer'); rc.classList.remove('hidden');
+    rc.innerHTML = '<h3 style="color:#5e3e1a;margin-bottom:8px;">🎉 你的专属身份</h3><div class="identity-badge">'+finalIdentity+'</div><div class="identity-desc">'+finalDesc+'</div><button class="jump-btn" id="jumpToWallBtn">✨ 进入寄语墙 ✨</button>';
+    document.getElementById('jumpToWallBtn').addEventListener('click', jumpToWall);
+  }
+
+  function jumpToWall() {
+    document.getElementById('selectionPage').classList.add('hidden');
+    document.getElementById('wallPage').classList.remove('hidden');
+    document.getElementById('currentIdentityDisplay').textContent = '🌟 你的身份：' + finalIdentity;
+    loadMessages();
+  }
+
+  function resetSelection() {
+    currentRound = 1; answers = []; finalIdentity = ""; finalDesc = "";
+    document.getElementById('questionTitle').style.display = '';
+    document.getElementById('optionsContainer').style.display = '';
+    document.getElementById('progressBar').style.display = '';
+    document.getElementById('resultContainer').classList.add('hidden');
+    document.getElementById('resultContainer').innerHTML = '';
+    document.getElementById('questionTitle').textContent = questions.round1.title;
+    renderOptions(questions.round1.options); updateProgress();
+  }
+
+  document.getElementById('startSelectionBtn').addEventListener('click', function() {
+    document.getElementById('coverPage').classList.add('hidden');
+    document.getElementById('selectionPage').classList.remove('hidden');
+    resetSelection();
+  });
+
+  document.getElementById('sendButton').addEventListener('click', handleSend);
+  document.getElementById('userMessage').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
+  });
+
+  function createSparks() {
+    var layer = document.getElementById('sparkLayer'); if (!layer) return; layer.innerHTML = '';
+    for (var i = 0; i < 32; i++) {
+      var s = document.createElement('div'); s.className = 'spark';
+      var size = Math.random()*7+3; s.style.width = size+'px'; s.style.height = size+'px';
+      s.style.left = Math.random()*100+'%'; s.style.top = Math.random()*100+'%';
+      s.style.animationDelay = Math.random()*12+'s'; s.style.animationDuration = (Math.random()*9+7)+'s';
+      layer.appendChild(s);
+    }
+  }
+  createSparks();
+
+  var quotes = ["✨ 丹心从来系家国 ✨","🌾 躬逢盛世，当不负盛世","🔥 每一束微光，都照亮前路","📖 后来人，即是此刻的我们","🌅 旭日东升，其道大光"];
+  var qi = 0, qe = document.getElementById('floatingQuote');
+  setInterval(function() { if(!qe) return; qe.style.opacity='0'; setTimeout(function(){ qi=(qi+1)%quotes.length; qe.textContent=quotes[qi]; qe.style.opacity='0.9'; },400); }, 6500);
+
+  questionTitle.textContent = questions.round1.title;
+  renderOptions(questions.round1.options);
+  updateProgress();
+
+  fetch(API_URL, { headers: { "Authorization": "token " + TOKEN } })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      window._lastSha = data.sha;
+      try { messages = JSON.parse(atob(data.content)) || []; } catch(e) { messages = []; }
+      renderWall();
+    })
+    .catch(function() { messages = []; renderWall(); });
+
+  setInterval(function() { loadMessages(); }, 3000);
+})();
+</script>
+</body>
+</html>
